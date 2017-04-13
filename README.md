@@ -1,14 +1,15 @@
-historian
-=========
+zsh_historian
+=============
 
-Command-line utility for managing shell history in a SQLite database.
+Command-line utility for managing shell history in a SQLite database, customised to use zshell.
 
-`~/.bash_history` is deduped and imported into a database.
+`~/.zhistory` is deduped and imported into a database.
 
 ### Requirements
 
 * SQLite
 * a home directory
+* awk
 
 ### Installation
 
@@ -26,11 +27,11 @@ Add `hist import` to your `.profile` (assuming `hist` is in your path):
 
     $ echo hist import >> ~/.profile
 
-This will import your .bash_history every time you launch a new shell.
+This will import your .zhistory every time you launch a new shell.
 
 ### Getting Started
 
-Import your `~/.bash_history`
+Import your `~/.zhistory`
 
     $ hist import
 
@@ -39,7 +40,7 @@ Import your `~/.bash_history`
 Show config:
 
     version:      0.0.1
-    bash_history: /Users/jerry/.bash_history
+    bash_history: /Users/jerry/.zhistory
     db:           /Users/jerry/.historian.db
     sqlite3:      /opt/local/bin/sqlite3
 
@@ -82,10 +83,11 @@ View log:
 Live like your db file could be corrupted at any time.
 
 Be wary of running specially crafted `hist` commands or against
-`~/.bash_history` files.
+`~/.zhistory` files.
 
 ### Cool Things in the Future
 
+* Fix back-ticks issue with importing to sqlite
 * `export` to append to `~/.bash_history`
 * `scrub` items from history
 * set or autodetect configs

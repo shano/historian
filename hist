@@ -1,8 +1,9 @@
 #!/bin/bash
 
 VERSION="0.0.1"
-SRC="${HOME}/.bash_history"
+SRC="${HOME}/.zhistory"
 DB="${HOME}/.historian.db"
+TMP_HIST="${HOME}/.tmp_hist_import"
 SQLITE3=$(which sqlite3)
 
 usage() {
@@ -74,6 +75,8 @@ cmd_import() {
     local args=$@
     preflight_check;
     ensure_db_exists;
+    touch ${TMP_HIST};
+    awk '{print substr($0,index($0,";")+1)}' ${SRC} > ${TMP_HIST}
 
     ( cat <<SQL
         CREATE TEMPORARY TABLE variables
@@ -82,7 +85,7 @@ cmd_import() {
             SELECT 'items', COUNT(*) FROM history;
         CREATE TEMPORARY TABLE history_import (line TEXT);
 .separator \`
-.import ${SRC} history_import
+.import ${TMP_HIST} history_import
         INSERT OR IGNORE INTO history(command, timestamp)
             SELECT line, NULL FROM history_import;
         UPDATE variables
@@ -90,6 +93,7 @@ cmd_import() {
         SELECT 'Imported ' || value || ' item(s).' FROM variables WHERE key = 'items';
 SQL
     ) | "${SQLITE3}" "${DB}";
+    rm ${TMP_HIST};
 }
 
 cmd_log() {
